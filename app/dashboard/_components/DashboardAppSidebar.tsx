@@ -10,6 +10,7 @@ import {
   IconSearch,
   IconSettings,
   IconTrophy,
+  IconShieldCheck,
 } from "@tabler/icons-react";
 import Logo from "@/public/logo.png";
 
@@ -39,6 +40,11 @@ const data = {
       title: "Leaderboard",
       url: "/dashboard/leaderboard",
       icon: IconTrophy,
+    },
+    {
+      title: "Integrity",
+      url: "/dashboard/confidence",
+      icon: IconShieldCheck,
     },
   ],
   navClouds: [

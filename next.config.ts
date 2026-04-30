@@ -4,13 +4,16 @@ import type { NextConfig } from "next";
 import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  turbopack: {},
   images: {
     remotePatterns: [
       {
         hostname: "anshlms.t3.storage.dev",
+        port: "",
+        protocol: "https",
+      },
+      {
+        hostname: "avatars.githubusercontent.com",
         port: "",
         protocol: "https",
       },

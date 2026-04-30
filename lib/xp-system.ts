@@ -101,7 +101,7 @@ export async function addXP(userId: string, activityType: ActivityType) {
     // 2. Get user's current XP and streak info
     const user = await tx.user.findUnique({
       where: { id: userId },
-      select: { totalXP: true, currentRank: true, currentStreak: true, longestStreak: true, lastXPDate: true }
+      select: { totalXP: true, currentRank: true, currentStreak: true, longestStreak: true, lastXPDate: true, integrityScore: true, lastIntegrityDate: true }
     });
 
     if (!user) throw new Error("User not found");
@@ -141,6 +141,15 @@ export async function addXP(userId: string, activityType: ActivityType) {
       newLongestStreak = 1;
     }
 
+    // Calculate integrity updates
+    let newIntegrityScore = user.integrityScore || 100;
+    let newLastIntegrityDate = user.lastIntegrityDate;
+
+    if (activityType === ActivityType.DAILY_LOGIN) {
+      newIntegrityScore = Math.min(100, newIntegrityScore + 10);
+      newLastIntegrityDate = new Date();
+    }
+
     // 3. Update user and return new state
     const updatedUser = await tx.user.update({
       where: { id: userId },
@@ -149,7 +158,9 @@ export async function addXP(userId: string, activityType: ActivityType) {
         currentRank: newRank,
         currentStreak: newStreak,
         longestStreak: newLongestStreak,
-        lastXPDate: newLastXPDate
+        lastXPDate: newLastXPDate,
+        integrityScore: newIntegrityScore,
+        lastIntegrityDate: newLastIntegrityDate
       },
       select: {
         id: true,
@@ -189,6 +200,7 @@ export async function getLeaderboard(timeframe: LeaderboardTimeframe = 'all-time
     
     return users.map((user: any, index: number) => ({
       ...user,
+      name: user.name || 'Anonymous Learner',
       position: index + 1
     }));
   } else {
@@ -229,7 +241,7 @@ export async function getLeaderboard(timeframe: LeaderboardTimeframe = 'all-time
       });
       return {
         id: u?.id || log.userId,
-        name: u?.name || 'Unknown User',
+        name: u?.name || 'Anonymous Learner',
         image: u?.image || null,
         currentRank: u?.currentRank || 'Beginner',
         totalXP: u?.totalXP || 0, // This is total all-time XP, but we rank by period XP

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { submitQuizAnswers } from "../actions";
 import { useConfetti } from "@/hooks/use-confetti";
+import { useAssessmentTracker } from "@/hooks/use-aiee-tracker";
 import { LessonContentType } from "@/app/data/course/get-lesson-content";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,9 @@ interface QuizPlayerProps {
 export function QuizPlayer({ quiz, lessonId, slug, isCompleted }: QuizPlayerProps) {
   const [pending, startTransition] = useTransition();
   const { triggerConfetti } = useConfetti();
+  
+  // Track assessment integrity
+  useAssessmentTracker(quiz.id);
 
   // Extract previous answers from the quiz data
   const previousAnswers: Record<string, string[]> = {};

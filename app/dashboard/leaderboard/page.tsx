@@ -186,7 +186,7 @@ export default async function LeaderboardPage(
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {leaderboardData.slice(3).map((user) => {
+              {(leaderboardData.length >= 3 ? leaderboardData.slice(3) : leaderboardData).map((user) => {
                 const isCurrentUser = user.id === currentUserId;
                 const rankColorClass = getRankColor(user.currentRank);
                 

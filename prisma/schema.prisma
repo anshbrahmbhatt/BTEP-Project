@@ -32,6 +32,10 @@ model User {
   longestStreak  Int      @default(0)
   lastXPDate     DateTime?
 
+  integrityScore Int      @default(100)
+  lastIntegrityDate DateTime?
+  integrityFlags String[] @default([])
+
   stripeCustomerId String? @unique
 
   role       String?

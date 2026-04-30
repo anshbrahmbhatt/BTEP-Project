@@ -15,6 +15,25 @@ export default async function DashboardPage() {
     requireUser(),
   ]);
 
+  let completedCourseCount = 0;
+  enrolledCourses.forEach((enrollment) => {
+    let totalLessons = 0;
+    let completedLessons = 0;
+
+    enrollment.Course.chapter.forEach((chapter) => {
+      totalLessons += chapter.lessons.length;
+      chapter.lessons.forEach((lesson) => {
+        if (lesson.lessonProgress.length > 0 && lesson.lessonProgress[0].completed) {
+          completedLessons++;
+        }
+      });
+    });
+
+    if (totalLessons > 0 && completedLessons === totalLessons) {
+      completedCourseCount++;
+    }
+  });
+
   return (
     <div className="w-full flex-1">
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-4 pb-7 pt-8 shadow-sm sm:px-6 lg:px-8">
@@ -44,7 +63,7 @@ export default async function DashboardPage() {
               <CardContent className="px-4 py-3">
                 <span className="text-muted-foreground text-sm font-medium">Completed</span>
                 <span className="mt-1 flex items-center gap-2 text-2xl font-bold">
-                  <Trophy className="w-5 h-5 text-yellow-500" /> 0
+                  <Trophy className="w-5 h-5 text-yellow-500" /> {completedCourseCount}
                 </span>
               </CardContent>
             </Card>
